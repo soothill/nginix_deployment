@@ -24,6 +24,20 @@ This repository provides a minimal-but-complete deployment for an nginx reverse 
 
 4. Adjust `nginx/conf.d/reverse-proxy.conf` to point `backend_service` at your internal endpoint(s). The `server_name` and certificate paths are pre-set for `www.soothill.com` + `pages.soothill.com`; tweak only if you are using different hostnames.
 
+## Makefile shortcuts
+
+A Makefile is included to streamline common tasks. Run `make help` to see all targets.
+
+- `make env` – copy `.env.example` to `.env` if it does not exist.
+- `make init` – create runtime directories (`data/certbot/*` and `logs/nginx`).
+- `make up` / `make down` – start or stop the Podman Compose stack.
+- `make test` – run `nginx -t` in a throwaway container to validate configuration.
+- `make certonly` – issue initial certificates using values from `.env`.
+- `make renew` – renew certificates and reload nginx immediately.
+- `make deploy WORKDIR=/opt/nginix_deployment` – rsync the repo (excluding data/logs/.env) to the target path.
+- `make install-systemd WORKDIR=/opt/nginix_deployment SYSTEMD_DIR=/etc/systemd/system` – install the systemd service/timer with the chosen working directory baked in.
+- `make enable-timer` – reload systemd and start the renewal timer (depends on `install-systemd`).
+
 ## Initial certificate issuance
 
 1. Create runtime directories (certbot expects them to exist):
