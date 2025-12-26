@@ -1,0 +1,11 @@
+[Unit]
+Description=Twice daily renewal for nginx proxy certificates
+
+[Timer]
+# Run at 00:00 and 12:00 daily (systemd calendar syntax requires full timestamps)
+OnCalendar=*-*-* 00:00:00,12:00:00
+Persistent=true
+AccuracySec=1h
+
+[Install]
+WantedBy=timers.target
