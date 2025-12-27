@@ -8,7 +8,7 @@ RSYNC ?= rsync
 INSTALL ?= install
 DATA_DIRS := data/certbot/conf data/certbot/www logs/nginx
 
-.PHONY: help init env up down test certonly renew reload deploy install-systemd enable-timer update
+.PHONY: help init env up down test certonly renew reload deploy install-systemd enable-timer
 
 help:
 	@printf "Available targets:\n"
@@ -19,13 +19,12 @@ help:
 	  up "Start nginx + dependencies via podman compose" \
 	  down "Stop the compose stack" \
 	  test "Run nginx config test inside a throwaway container" \
-          certonly "Issue initial Let's Encrypt cert(s) using .env values" \
-          renew "Renew certificates and reload nginx" \
-          reload "Reload nginx configuration" \
-          deploy "Rsync repo (excluding data/logs) to $(WORKDIR)" \
-          update "Sync latest configs to $(WORKDIR) and restart/reload services" \
-          install-systemd "Install certbot systemd units to $(SYSTEMD_DIR)" \
-          enable-timer "Enable + start certbot-renew.timer";
+	  certonly "Issue initial Let's Encrypt cert(s) using .env values" \
+	  renew "Renew certificates and reload nginx" \
+	  reload "Reload nginx configuration" \
+	  deploy "Rsync repo (excluding data/logs) to $(WORKDIR)" \
+	  install-systemd "Install certbot systemd units to $(SYSTEMD_DIR)" \
+	  enable-timer "Enable + start certbot-renew.timer";
 
 init:
 	@mkdir -p $(DATA_DIRS)
@@ -55,7 +54,7 @@ certonly: init
 		  -d "$$LETSENCRYPT_DOMAIN" $${LETSENCRYPT_EXTRA_DOMAINS:+ -d $${LETSENCRYPT_EXTRA_DOMAINS//,/ -d }}'
 
 renew: init
-	@$(COMPOSE) run --rm --entrypoint certbot certbot renew --webroot -w /var/www/certbot --quiet
+	@$(COMPOSE) run --rm certbot renew --webroot -w /var/www/certbot --quiet
 	@$(COMPOSE) exec nginx nginx -s reload
 
 reload:
@@ -73,11 +72,5 @@ install-systemd:
 	$(INSTALL) -Dm644 systemd/certbot-renew.timer $(SYSTEMD_DIR)/certbot-renew.timer
 
 enable-timer: install-systemd
-        systemctl daemon-reload
-        systemctl enable --now certbot-renew.timer
-
-update: deploy
-        @cd $(WORKDIR) && mkdir -p $(DATA_DIRS)
-        @cd $(WORKDIR) && $(COMPOSE) pull
-        @cd $(WORKDIR) && $(COMPOSE) up -d
-        @cd $(WORKDIR) && $(COMPOSE) exec nginx nginx -s reload
+	systemctl daemon-reload
+	systemctl enable --now certbot-renew.timer

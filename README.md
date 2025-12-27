@@ -35,11 +35,8 @@ A Makefile is included to streamline common tasks. Run `make help` to see all ta
 - `make certonly` – issue initial certificates using values from `.env`.
 - `make renew` – renew certificates and reload nginx immediately.
 - `make deploy WORKDIR=/opt/nginix_deployment` – rsync the repo (excluding data/logs/.env) to the target path.
-- `make update WORKDIR=/opt/nginix_deployment` – sync the latest configs into `WORKDIR`, pull newer images, restart the stack, and reload nginx.
 - `make install-systemd WORKDIR=/opt/nginix_deployment SYSTEMD_DIR=/etc/systemd/system` – install the systemd service/timer with the chosen working directory baked in.
 - `make enable-timer` – reload systemd and start the renewal timer (depends on `install-systemd`).
-
-After pulling new commits from GitHub, run `make update WORKDIR=/opt/nginix_deployment` on the host to re-sync the configuration, pull newer images, restart the stack, and reload nginx with the latest settings.
 
 ## Initial certificate issuance
 
