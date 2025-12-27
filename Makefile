@@ -54,7 +54,7 @@ certonly: init
 		  -d "$$LETSENCRYPT_DOMAIN" $${LETSENCRYPT_EXTRA_DOMAINS:+ -d $${LETSENCRYPT_EXTRA_DOMAINS//,/ -d }}'
 
 renew: init
-	@$(COMPOSE) run --rm --entrypoint certbot certbot renew --webroot -w /var/www/certbot --quiet
+	@$(COMPOSE) run --rm certbot renew --webroot -w /var/www/certbot --quiet
 	@$(COMPOSE) exec nginx nginx -s reload
 
 reload:

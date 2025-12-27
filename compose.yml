@@ -26,6 +26,12 @@ services:
       - CERTBOT_EMAIL=${LETSENCRYPT_EMAIL}
       - CERTBOT_DOMAIN=${LETSENCRYPT_DOMAIN}
       - CERTBOT_EXTRA_DOMAINS=${LETSENCRYPT_EXTRA_DOMAINS}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Certbot container is intended to be run manually.\n" \
+          "Use 'podman compose run certbot certonly ...' or the systemd timer for renewal."; \
+        sleep infinity
     networks:
       - proxy
 
