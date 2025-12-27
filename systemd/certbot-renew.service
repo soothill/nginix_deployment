@@ -1,0 +1,15 @@
+[Unit]
+Description=Renew Let's Encrypt certificates for the nginx proxy (podman compose)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/nginix_deployment
+EnvironmentFile=/opt/nginix_deployment/.env
+ExecStart=/usr/bin/podman compose --file /opt/nginix_deployment/compose.yml run --rm --entrypoint certbot certbot renew --webroot -w /var/www/certbot --quiet
+ExecStartPost=/usr/bin/podman compose --file /opt/nginix_deployment/compose.yml exec nginx nginx -s reload
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target

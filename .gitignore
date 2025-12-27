@@ -1,0 +1,4 @@
+# Ignore certificate material and runtime logs
+/data/
+/logs/
+.env
